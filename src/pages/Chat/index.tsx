@@ -19,7 +19,9 @@ const ChatPage = () => {
       timestamp: Date.now(),
     })),
   );
-  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView();
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView({
+    duration: 0,
+  });
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -3,7 +3,11 @@ import Router from './router';
 
 const App = () => {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{ colorScheme: 'dark' }}
+    >
       <Router />
     </MantineProvider>
   );

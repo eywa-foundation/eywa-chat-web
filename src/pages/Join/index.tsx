@@ -26,6 +26,7 @@ const JoinPage = () => {
     <Center mih="100vh">
       <form onSubmit={handleJoin}>
         <Flex direction="column" gap="1rem" align="center">
+          <Text>my address: {accounts[0].address}</Text>
           <TextInput
             label="Enter Bob address"
             placeholder="cosmos1234567890abcdef"

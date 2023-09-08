@@ -1,14 +1,28 @@
 import { Button, Center, Flex, Text, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router';
+import useKeplr from '../../hooks/useKeplr';
 
 const JoinPage = () => {
+  const { accounts, error, loading } = useKeplr();
   const navigate = useNavigate();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const [account] = accounts ?? [];
+    if (!account) return;
+    console.log(account.address);
     console.log(e.currentTarget.address.value);
     navigate('/chat');
   };
+
+  if (loading) return null;
+  if (error || !accounts) {
+    return (
+      <Center mih="100vh">
+        <Text>Keplr not installed</Text>
+      </Center>
+    );
+  }
 
   return (
     <Center mih="100vh">
@@ -16,7 +30,7 @@ const JoinPage = () => {
         <Flex direction="column" gap="1rem" align="center">
           <TextInput
             label="Enter Bob address"
-            placeholder="0x1234567890abcdef"
+            placeholder="cosmos1234567890abcdef"
             style={{ width: '400px' }}
             name="address"
           />

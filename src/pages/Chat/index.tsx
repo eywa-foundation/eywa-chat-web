@@ -1,5 +1,5 @@
 import { Box, Button, Container, Flex, Text, TextInput } from '@mantine/core';
-import { useListState } from '@mantine/hooks';
+import { useInputState, useListState } from '@mantine/hooks';
 
 interface ChatMessage {
   id: string;
@@ -9,7 +9,8 @@ interface ChatMessage {
 }
 
 const ChatPage = () => {
-  const [messages] = useListState<ChatMessage>(
+  const [message, setMessage] = useInputState('');
+  const [messages, messageHandler] = useListState<ChatMessage>(
     [...Array(100)].map((_, i) => ({
       id: `${i}`,
       author: i % 2 === 0 ? 'Alice' : 'Bob',
@@ -17,6 +18,20 @@ const ChatPage = () => {
       timestamp: Date.now(),
     })),
   );
+
+  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!message) {
+      return;
+    }
+    messageHandler.prepend({
+      id: `${globalThis.crypto.randomUUID()}`,
+      author: 'Alice',
+      message,
+      timestamp: Date.now(),
+    });
+    setMessage('');
+  };
 
   return (
     <Container
@@ -35,7 +50,7 @@ const ChatPage = () => {
                 key={message.id}
                 style={{
                   alignSelf:
-                    message.author === 'Alice' ? 'flex-start' : 'flex-end',
+                    message.author === 'Alice' ? 'flex-end' : 'flex-start',
                 }}
               >
                 {message.message}
@@ -43,12 +58,18 @@ const ChatPage = () => {
             ))}
           </Flex>
         </Box>
-        <Flex gap="1rem">
-          <TextInput style={{ flex: 1 }} />
-          <Button>
-            <Text>Send</Text>
-          </Button>
-        </Flex>
+        <form onSubmit={handleSendMessage}>
+          <Flex gap="1rem">
+            <TextInput
+              style={{ flex: 1 }}
+              value={message}
+              onChange={setMessage}
+            />
+            <Button>
+              <Text>Send</Text>
+            </Button>
+          </Flex>
+        </form>
       </Flex>
     </Container>
   );

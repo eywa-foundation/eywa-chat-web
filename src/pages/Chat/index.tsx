@@ -72,7 +72,7 @@ const ChatPage = () => {
               value={message}
               onChange={setMessage}
             />
-            <Button>
+            <Button type="submit">
               <Text>Send</Text>
             </Button>
           </Flex>

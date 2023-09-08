@@ -1,5 +1,7 @@
+import Router from './router';
+
 const App = () => {
-  return <></>;
+  return <Router />;
 };
 
 export default App;

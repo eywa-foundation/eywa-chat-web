@@ -52,18 +52,24 @@ const ChatPage = () => {
     >
       <Flex direction="column" gap="1rem" style={{ height: '100%' }}>
         <Box style={{ flex: 1, overflow: 'scroll' }} ref={scrollableRef}>
-          <Flex direction="column-reverse">
+          <Flex direction="column-reverse" gap=".25em">
             <span ref={targetRef} />
             {messages.map((message) => (
-              <Text
+              <Box
                 key={message.id}
-                style={{
+                p="0.25em 0.5em"
+                sx={(theme) => ({
+                  backgroundColor:
+                    theme.colorScheme === 'dark'
+                      ? theme.colors.dark[6]
+                      : theme.colors.gray[0],
                   alignSelf:
                     message.author === 'Alice' ? 'flex-end' : 'flex-start',
-                }}
+                  borderRadius: '0.5rem',
+                })}
               >
-                {message.message}
-              </Text>
+                <Text>{message.message}</Text>
+              </Box>
             ))}
           </Flex>
         </Box>

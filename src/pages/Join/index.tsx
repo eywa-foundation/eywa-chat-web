@@ -13,7 +13,6 @@ const JoinPage = () => {
     navigate(`/chat/${e.currentTarget.address.value}`);
   };
 
-  if (loading) return null;
   if (error || !accounts) {
     return (
       <Center mih="100vh">
@@ -21,6 +20,7 @@ const JoinPage = () => {
       </Center>
     );
   }
+  if (loading) return null;
 
   return (
     <Center mih="100vh">

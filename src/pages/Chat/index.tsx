@@ -9,6 +9,7 @@ const ChatPage = () => {
     handleSendMessage,
     scrollableRef,
     targetRef,
+    copyPublicKey,
   } = useChat();
 
   return (
@@ -49,9 +50,13 @@ const ChatPage = () => {
               style={{ flex: 1 }}
               value={message}
               onChange={setMessage}
+              autoComplete="off"
             />
             <Button type="submit">
               <Text>Send</Text>
+            </Button>
+            <Button onClick={copyPublicKey}>
+              <Text>Copy Public Key</Text>
             </Button>
           </Flex>
         </form>

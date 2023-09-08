@@ -1,5 +1,8 @@
 import { useInputState, useListState, useScrollIntoView } from '@mantine/hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+import useKeplr from '../../hooks/useKeplr';
+import { useParams } from 'react-router';
 
 interface ChatMessage {
   id: string;
@@ -10,23 +13,32 @@ interface ChatMessage {
 
 const useChat = () => {
   const [message, setMessage] = useInputState('');
-  const [messages, messageHandler] = useListState<ChatMessage>(
-    [...Array(100)].map((_, i) => ({
-      id: `${i}`,
-      author: i % 2 === 0 ? 'Alice' : 'Bob',
-      message: `Message ${i}`,
-      timestamp: Date.now(),
-    })),
-  );
+  const [messages, messageHandler] = useListState<ChatMessage>();
   const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView({
     duration: 0,
   });
+  const [socket] = useState(() => io('http://localhost:3000'));
+  const { accounts } = useKeplr();
+  const address = accounts?.[0]?.address;
+  const { address: targetAddress } = useParams<{ address: string }>();
+
+  useEffect(() => {
+    if (!address || !targetAddress) return;
+    socket.emit('join', { from: address, to: targetAddress });
+    socket.on('chat', ({ content }: { content: string }) => {
+      messageHandler.prepend({
+        id: `${globalThis.crypto.randomUUID()}`,
+        author: 'Bob',
+        message: content,
+        timestamp: Date.now(),
+      });
+    });
+  }, [address, messageHandler, socket, targetAddress]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message) {
-      return;
-    }
+    if (!message || !address || !targetAddress) return;
+    socket.emit('chat', { from: address, to: targetAddress, content: message });
     messageHandler.prepend({
       id: `${globalThis.crypto.randomUUID()}`,
       author: 'Alice',

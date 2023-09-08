@@ -8,7 +8,7 @@ const Router = () => {
       <Routes>
         <Route>
           <Route index element={<JoinPage />} />
-          <Route path="chat" element={<ChatPage />} />
+          <Route path="chat/:address" element={<ChatPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

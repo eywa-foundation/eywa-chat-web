@@ -10,9 +10,7 @@ const JoinPage = () => {
     e.preventDefault();
     const [account] = accounts ?? [];
     if (!account) return;
-    console.log(account.address);
-    console.log(e.currentTarget.address.value);
-    navigate('/chat');
+    navigate(`/chat/${e.currentTarget.address.value}`);
   };
 
   if (loading) return null;

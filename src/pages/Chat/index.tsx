@@ -9,7 +9,14 @@ interface ChatMessage {
 }
 
 const ChatPage = () => {
-  const [values] = useListState<ChatMessage>();
+  const [messages] = useListState<ChatMessage>(
+    [...Array(100)].map((_, i) => ({
+      id: `${i}`,
+      author: i % 2 === 0 ? 'Alice' : 'Bob',
+      message: `Message ${i}`,
+      timestamp: Date.now(),
+    })),
+  );
 
   return (
     <Container
@@ -23,8 +30,16 @@ const ChatPage = () => {
       <Flex direction="column" gap="1rem" style={{ height: '100%' }}>
         <Box style={{ flex: 1, overflow: 'scroll' }}>
           <Flex direction="column-reverse">
-            {values.map((_, i) => (
-              <div key={i}>{i}</div>
+            {messages.map((message) => (
+              <Text
+                key={message.id}
+                style={{
+                  alignSelf:
+                    message.author === 'Alice' ? 'flex-start' : 'flex-end',
+                }}
+              >
+                {message.message}
+              </Text>
             ))}
           </Flex>
         </Box>

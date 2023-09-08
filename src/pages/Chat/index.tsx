@@ -1,5 +1,6 @@
 import { Box, Button, Container, Flex, Text, TextInput } from '@mantine/core';
-import { useInputState, useListState } from '@mantine/hooks';
+import { useInputState, useListState, useScrollIntoView } from '@mantine/hooks';
+import { useEffect } from 'react';
 
 interface ChatMessage {
   id: string;
@@ -18,6 +19,7 @@ const ChatPage = () => {
       timestamp: Date.now(),
     })),
   );
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView();
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,6 +35,10 @@ const ChatPage = () => {
     setMessage('');
   };
 
+  useEffect(() => {
+    scrollIntoView();
+  }, [messages, scrollIntoView]);
+
   return (
     <Container
       py="1rem"
@@ -43,8 +49,9 @@ const ChatPage = () => {
       }}
     >
       <Flex direction="column" gap="1rem" style={{ height: '100%' }}>
-        <Box style={{ flex: 1, overflow: 'scroll' }}>
+        <Box style={{ flex: 1, overflow: 'scroll' }} ref={scrollableRef}>
           <Flex direction="column-reverse">
+            <span ref={targetRef} />
             {messages.map((message) => (
               <Text
                 key={message.id}

@@ -25,14 +25,25 @@ const useChat = () => {
   useEffect(() => {
     if (!address || !targetAddress) return;
     socket.emit('join', { from: address, to: targetAddress });
-    socket.on('chat', ({ content }: { content: string }) => {
+    const handleChat = ({
+      from,
+      content,
+    }: {
+      from: string;
+      content: string;
+    }) => {
+      if (from === address) return;
       messageHandler.prepend({
         id: `${globalThis.crypto.randomUUID()}`,
         author: 'Bob',
         message: content,
         timestamp: Date.now(),
       });
-    });
+    };
+    socket.on('chat', handleChat);
+    return () => {
+      socket.off('chat', handleChat);
+    };
   }, [address, messageHandler, socket, targetAddress]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {

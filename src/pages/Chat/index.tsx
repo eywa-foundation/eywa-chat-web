@@ -1,5 +1,6 @@
 import { Box, Button, Container, Flex, Text, TextInput } from '@mantine/core';
 import useChat from './useChat';
+import dayjs from 'dayjs';
 
 const ChatPage = () => {
   const {
@@ -44,6 +45,9 @@ const ChatPage = () => {
               >
                 <Text color="white" style={{ wordBreak: 'break-all' }}>
                   {message.message}
+                </Text>
+                <Text color="white" size="0.5em">
+                  {dayjs(message.timestamp).format('MMM D, h:mm A')}
                 </Text>
               </Box>
             ))}

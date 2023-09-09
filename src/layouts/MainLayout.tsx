@@ -8,8 +8,8 @@ const MainLayout = ({ smallPadding = false }: { smallPadding?: boolean }) => {
       sx={(theme) => ({
         background:
           theme.colorScheme === 'dark'
-            ? theme.colors.dark[8]
-            : theme.colors.gray[1],
+            ? theme.colors.dark[7]
+            : theme.colors.gray[0],
       })}
     >
       <Container
@@ -20,8 +20,8 @@ const MainLayout = ({ smallPadding = false }: { smallPadding?: boolean }) => {
         sx={(theme) => ({
           background:
             theme.colorScheme === 'dark'
-              ? theme.colors.dark[7]
-              : theme.colors.gray[0],
+              ? theme.colors.dark[8]
+              : theme.colors.gray[1],
         })}
       >
         <Outlet />

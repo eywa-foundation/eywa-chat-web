@@ -65,9 +65,11 @@ const Background = ({ children }: React.PropsWithChildren) => {
   }, []);
 
   return (
-    <Box>
+    <Box h="100%">
       <canvas style={{ position: 'fixed', zIndex: 1 }} ref={canvasEl} />
-      <Box style={{ zIndex: 2, position: 'relative' }}>{children}</Box>
+      <Box h="100%" style={{ zIndex: 2, position: 'relative' }}>
+        {children}
+      </Box>
     </Box>
   );
 };

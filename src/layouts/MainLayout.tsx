@@ -1,5 +1,6 @@
-import { Container, Flex } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
 import { Outlet } from 'react-router';
+import Background from './Background';
 
 const MainLayout = ({
   smallPadding: nonPadding = false,
@@ -16,11 +17,10 @@ const MainLayout = ({
             : theme.colors.gray[0],
       })}
     >
-      <Container
+      <Box
         w="100vw"
         maw="500px"
         mih="100vh"
-        px={nonPadding ? 0 : '3rem'}
         sx={(theme) => ({
           background:
             theme.colorScheme === 'dark'
@@ -28,8 +28,12 @@ const MainLayout = ({
               : theme.colors.gray[1],
         })}
       >
-        <Outlet />
-      </Container>
+        <Background>
+          <Box h="100%" px={nonPadding ? 0 : '3rem'}>
+            <Outlet />
+          </Box>
+        </Background>
+      </Box>
     </Flex>
   );
 };

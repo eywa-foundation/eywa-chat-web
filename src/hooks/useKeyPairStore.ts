@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
+  exportPrivateKey,
   exportPublicKey,
   generateKeyPair,
   importPrivateKey,
@@ -39,16 +40,24 @@ const useKeyPairStore = create<KeyPairState>()(
           const json = JSON.parse(serialized);
           return {
             state: {
-              publicKey: await importPublicKey(json.publicKey),
-              privateKey: await importPrivateKey(json.privateKey),
+              publicKey: json.publicKey
+                ? await importPublicKey(json.publicKey)
+                : null,
+              privateKey: json.privateKey
+                ? await importPrivateKey(json.privateKey)
+                : null,
             },
             version: json.version,
           };
         },
         setItem: async (name, value) => {
           const serialized = JSON.stringify({
-            publicKey: await exportPublicKey(value.state.publicKey),
-            privateKey: await exportPublicKey(value.state.privateKey),
+            publicKey: value.state.publicKey
+              ? await exportPublicKey(value.state.publicKey)
+              : null,
+            privateKey: value.state.privateKey
+              ? await exportPrivateKey(value.state.privateKey)
+              : null,
             version: value.version,
           });
           globalThis.localStorage.setItem(name, serialized);

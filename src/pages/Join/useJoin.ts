@@ -18,7 +18,9 @@ const useJoin = () => {
       setJoining(true);
       const [account] = accounts ?? [];
       if (!account) return;
-      navigate(`/chat/${e.currentTarget.address.value}`);
+      const targetAddress = e.currentTarget.address.value;
+      if (!targetAddress) return;
+      navigate(`/chat/${targetAddress}`);
     } finally {
       setJoining(false);
     }

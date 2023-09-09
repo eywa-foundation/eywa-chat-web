@@ -18,11 +18,11 @@ const useKeplr = (chainId = 'cosmoshub-4') => {
 
   useEffect(() => {
     if (window.keplr) {
-      setKeplr(window.keplr);
+      setKeplr(window.keplr as Keplr);
     }
 
     if (document.readyState === 'complete') {
-      setKeplr(window.keplr);
+      setKeplr(window.keplr as Keplr);
       if (!window.keplr) {
         setError(new Error('Keplr not found'));
       }
@@ -31,7 +31,7 @@ const useKeplr = (chainId = 'cosmoshub-4') => {
     const stateChangeHandler = (event: Event) => {
       if ((event.target as Document | undefined)?.readyState !== 'complete')
         return;
-      setKeplr(window.keplr);
+      setKeplr(window.keplr as Keplr);
       if (!window.keplr) {
         setError(new Error('Keplr not found'));
       }

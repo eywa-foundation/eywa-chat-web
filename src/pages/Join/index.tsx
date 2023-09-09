@@ -1,10 +1,12 @@
 import { Button, Center, Flex, Text, TextInput } from '@mantine/core';
 import { useNavigate } from 'react-router';
 import useKeplr from '../../hooks/useKeplr';
+import useIgnite from '../../hooks/useIgnite';
 
 const JoinPage = () => {
   const { accounts, error, loading } = useKeplr();
   const navigate = useNavigate();
+  useIgnite();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

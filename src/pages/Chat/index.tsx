@@ -26,6 +26,9 @@ const ChatPage = () => {
             <span ref={targetRef} />
             {messages.map((message) => (
               <Box
+                bg={`linear-gradient(130deg, #87BCF7 ${
+                  message.author === 'Alice' ? -100 : 0
+                }%, #C07FF7 ${message.author === 'Alice' ? 100 : 200}%)`}
                 key={message.id}
                 p="0.25em 0.5em"
                 sx={(theme) => ({
@@ -38,7 +41,7 @@ const ChatPage = () => {
                   borderRadius: '0.5rem',
                 })}
               >
-                <Text>{message.message}</Text>
+                <Text color="white">{message.message}</Text>
               </Box>
             ))}
           </Flex>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import useRoomsStore from '../../hooks/useRoomsStore';
 
 export interface Room {
   opponent: string;
@@ -10,20 +11,20 @@ export interface Room {
 }
 
 const useList = () => {
+  const { rooms: persistRooms } = useRoomsStore();
   const [rooms, setRooms] = useState<Room[]>();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!persistRooms) return;
     setRooms(
-      [...Array(10)].map(() => ({
-        opponent: 'opponent',
-        roomId: globalThis.crypto.randomUUID(),
-        server: 'server',
+      persistRooms.map((room) => ({
+        ...room,
         healthy: Math.random() < 0.9,
         lastMessage: 'lastMessage',
       })),
     );
-  }, []);
+  }, [persistRooms]);
 
   const create = () => {
     navigate('/join');

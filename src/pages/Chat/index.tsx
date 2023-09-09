@@ -9,7 +9,6 @@ const ChatPage = () => {
     handleSendMessage,
     scrollableRef,
     targetRef,
-    copyPublicKey,
   } = useChat();
 
   return (
@@ -45,18 +44,42 @@ const ChatPage = () => {
           </Flex>
         </Box>
         <form onSubmit={handleSendMessage}>
-          <Flex gap="1rem">
+          <Flex gap="1em">
             <TextInput
               style={{ flex: 1 }}
               value={message}
               onChange={setMessage}
               autoComplete="off"
+              wrapperProps={{
+                sx: {
+                  '& input': {
+                    height: '1.5em',
+                    borderRadius: '1em',
+                    paddingInline: '1em',
+                    fontWeight: '600',
+                  },
+                },
+              }}
             />
-            <Button type="submit">
-              <Text>Send</Text>
-            </Button>
-            <Button onClick={copyPublicKey}>
-              <Text>Copy Public Key</Text>
+            <Button
+              type="submit"
+              variant="gradient"
+              gradient={{ from: '#87BCF7', to: '#C07FF7', deg: 130 }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
             </Button>
           </Flex>
         </form>

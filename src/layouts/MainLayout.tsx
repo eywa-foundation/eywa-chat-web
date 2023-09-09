@@ -1,7 +1,7 @@
 import { Container, Flex } from '@mantine/core';
 import { Outlet } from 'react-router';
 
-const MainLayout = () => {
+const MainLayout = ({ smallPadding = false }: { smallPadding?: boolean }) => {
   return (
     <Flex
       justify="center"
@@ -16,7 +16,7 @@ const MainLayout = () => {
         w="100vw"
         maw="500px"
         mih="100vh"
-        px="3rem"
+        px={smallPadding ? '1rem' : '3rem'}
         sx={(theme) => ({
           background:
             theme.colorScheme === 'dark'

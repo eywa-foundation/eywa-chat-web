@@ -6,13 +6,15 @@ const Background = ({ children }: React.PropsWithChildren) => {
 
   useEffect(() => {
     const canvas = canvasEl.current;
+    if (!canvas) return;
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasEl.current;
     const ctx = canvasEl.current?.getContext('2d');
     if (!canvas || !ctx) return;
 
     let cancelled = false;
-
-    canvas.width = canvas.parentElement!.clientWidth;
-    canvas.height = canvas.parentElement!.clientHeight;
 
     const starSize = 0.8;
     const starSpeed = 6e-2;
@@ -22,6 +24,18 @@ const Background = ({ children }: React.PropsWithChildren) => {
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
     }));
+
+    const resize = () => {
+      canvas.width = canvas.parentElement!.clientWidth;
+      canvas.height = canvas.parentElement!.clientHeight;
+      stars.forEach((star) => {
+        star.x = Math.random() * window.innerWidth;
+        star.y = Math.random() * window.innerHeight;
+      });
+    };
+
+    resize();
+    window.addEventListener('resize', resize);
 
     const draw = () => {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -46,6 +60,7 @@ const Background = ({ children }: React.PropsWithChildren) => {
     animate();
     return () => {
       cancelled = true;
+      window.removeEventListener('resize', resize);
     };
   }, []);
 

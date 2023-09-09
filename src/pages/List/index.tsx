@@ -24,7 +24,7 @@ const HealthyCircle = ({ healthy }: { healthy: boolean }) => (
   />
 );
 
-const ChatList = ({ room }: { room: Room }) => {
+const ChatList = ({ room }: { room: Room & { nickname: string } }) => {
   return (
     <Flex my="1rem" justify="space-between" align="center" gap="1em">
       <Flex direction="column" style={{ overflow: 'hidden' }}>
@@ -35,7 +35,7 @@ const ChatList = ({ room }: { room: Room }) => {
           {room.opponent}
         </Text>
         <Text>{room.messages[room.messages.length - 1]?.message}</Text>
-        <Text>{room.server}</Text>
+        <Text>{room.nickname}</Text>
       </Flex>
       <HealthyCircle healthy={room.healthy} />
     </Flex>

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import useRoomsStore from '../../hooks/useRoomsStore';
 import useKeplr from '../../hooks/useKeplr';
+import useRelayServers from '../../hooks/useRelayServers';
 
 export interface Room {
   opponent: string;
@@ -15,6 +16,7 @@ const useList = () => {
   const { rooms, addRoom } = useRoomsStore();
   const navigate = useNavigate();
   const { client, accounts } = useKeplr();
+  const relayServers = useRelayServers();
 
   useEffect(() => {
     const account = accounts?.[0];
@@ -49,7 +51,15 @@ const useList = () => {
     navigate('/join');
   };
 
-  return { rooms, create };
+  return {
+    rooms: rooms.map((room) => ({
+      ...room,
+      nickname:
+        relayServers.find((server) => server.value === room.server)?.label ??
+        'Unknown Network',
+    })),
+    create,
+  };
 };
 
 export default useList;

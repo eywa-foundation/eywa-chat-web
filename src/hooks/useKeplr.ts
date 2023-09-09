@@ -12,7 +12,7 @@ declare global {
 }
 
 const useKeplr = ({
-  chainId = 'eywacontract',
+  chainId = 'eywa',
   enabled = true,
 }: {
   chainId?: string;
@@ -65,39 +65,39 @@ const useKeplr = ({
             coinType: 118,
           },
           bech32Config: {
-            bech32PrefixAccAddr: 'celestia',
-            bech32PrefixAccPub: 'celestia' + 'pub',
-            bech32PrefixValAddr: 'celestia' + 'valoper',
-            bech32PrefixValPub: 'celestia' + 'valoperpub',
-            bech32PrefixConsAddr: 'celestia' + 'valcons',
-            bech32PrefixConsPub: 'celestia' + 'valconspub',
+            bech32PrefixAccAddr: 'cosmos',
+            bech32PrefixAccPub: 'cosmos' + 'pub',
+            bech32PrefixValAddr: 'cosmos' + 'valoper',
+            bech32PrefixValPub: 'cosmos' + 'valoperpub',
+            bech32PrefixConsAddr: 'cosmos' + 'valcons',
+            bech32PrefixConsPub: 'cosmos' + 'valconspub',
           },
           currencies: [
             {
-              coinDenom: 'TIA',
-              coinMinimalDenom: 'utia',
+              coinDenom: 'ATOM',
+              coinMinimalDenom: 'token',
               coinDecimals: 6,
-              coinGeckoId: 'celestia',
+              coinGeckoId: 'cosmos',
             },
           ],
           feeCurrencies: [
             {
-              coinDenom: 'TIA',
-              coinMinimalDenom: 'utia',
+              coinDenom: 'ATOM',
+              coinMinimalDenom: 'token',
               coinDecimals: 6,
-              coinGeckoId: 'celestia',
+              coinGeckoId: 'cosmos',
               gasPriceStep: {
-                low: 0.1,
-                average: 0.2,
-                high: 0.4,
+                low: 0.01,
+                average: 0.025,
+                high: 0.04,
               },
             },
           ],
           stakeCurrency: {
-            coinDenom: 'TIA',
-            coinMinimalDenom: 'utia',
+            coinDenom: 'ATOM',
+            coinMinimalDenom: 'token',
             coinDecimals: 6,
-            coinGeckoId: 'celestia',
+            coinGeckoId: 'cosmos',
           },
         });
         await keplr.enable(chainId);

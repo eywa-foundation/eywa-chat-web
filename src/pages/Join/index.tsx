@@ -1,8 +1,9 @@
-import { Button, Center, Flex, Text, TextInput } from '@mantine/core';
+import { Button, Center, Flex, Select, Text, TextInput } from '@mantine/core';
 import useJoin from './useJoin';
 
 const JoinPage = () => {
-  const { copyAddress, handleJoin, error, loading, joining } = useJoin();
+  const { copyAddress, handleJoin, error, loading, joining, relyingServers } =
+    useJoin();
 
   if (error) {
     return (
@@ -24,12 +25,22 @@ const JoinPage = () => {
             name="opponent"
             w="100%"
             withAsterisk
+            required
           />
           <TextInput
             label="Enter Opponent Address"
             placeholder="celestia1234567890abcdef"
             name="address"
             w="100%"
+            withAsterisk
+            required
+          />
+          <Select
+            label="Select Relying Server"
+            placeholder="Select a server"
+            w="100%"
+            data={relyingServers}
+            name="server"
             withAsterisk
           />
           <Flex gap="1rem">

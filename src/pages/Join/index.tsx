@@ -66,7 +66,7 @@ const JoinPage = () => {
             }}
           />
           <Select
-            label="Relying Server"
+            label="Relay Server"
             w="100%"
             data={relyingServers}
             name="server"

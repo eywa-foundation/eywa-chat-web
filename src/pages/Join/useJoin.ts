@@ -17,7 +17,7 @@ const useJoin = () => {
   const copyAddress = () => copy(accounts?.[0].address ?? '');
   const [joining, setJoining] = useState(false);
   const [relyingServers, setRelyingServers] = useState<
-    { value: string; label: string; selected: boolean }[]
+    { value: string; label: string }[]
   >([]);
   const { client } = useKeplr();
   const { publicKey } = useKeyPairStore();
@@ -56,32 +56,22 @@ const useJoin = () => {
   };
 
   useEffect(() => {
-    const servers = [
-      {
-        value: 'cosmos',
-        label: 'Cosmos Network',
-      },
-      {
-        value: 'wss://relayer.eytukan.eywa.jaehong21.com',
-        label: 'Eytukan',
-      },
-      {
-        value: 'wss://relayer.neytiri.eywa.jaehong21.com',
-        label: 'Neytiri',
-      },
-      {
-        value: 'wss://relayer.toruk.eywa.jaehong21.com',
-        label: 'Toruk',
-      },
-    ];
-    const selectedIndex = Math.floor(Math.random() * servers.length);
-    setRelyingServers(
-      servers.map((server, index) => ({
-        ...server,
-        selected: index === selectedIndex,
-      })),
-    );
-  }, []);
+    if (!client) return;
+    (async () => {
+      const relayServers = await client.EywaEywa.query.queryGetRelayServer();
+      const servers = [
+        {
+          value: 'cosmos',
+          label: 'Cosmos Network',
+        },
+        ...(relayServers.data.relayServer?.map((server) => ({
+          value: server.location ?? '',
+          label: server.nickname ?? '',
+        })) ?? []),
+      ];
+      setRelyingServers(servers);
+    })();
+  }, [client]);
 
   return { copyAddress, handleJoin, error, loading, joining, relyingServers };
 };

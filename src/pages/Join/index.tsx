@@ -1,26 +1,10 @@
 import { Button, Center, Flex, Text, TextInput } from '@mantine/core';
-import { useNavigate } from 'react-router';
-import useKeplr from '../../hooks/useKeplr';
-import useIgnite from '../../hooks/useIgnite';
-import { useClipboard } from '@mantine/hooks';
+import useJoin from './useJoin';
 
 const JoinPage = () => {
-  const { accounts, error, loading } = useKeplr();
-  const navigate = useNavigate();
-  useIgnite((!error && accounts?.length && !loading) || false);
-  const { copy } = useClipboard();
-  const copyAddress = () => {
-    copy(accounts?.[0].address ?? '');
-  };
+  const { copyAddress, handleJoin, error, loading } = useJoin();
 
-  const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const [account] = accounts ?? [];
-    if (!account) return;
-    navigate(`/chat/${e.currentTarget.address.value}`);
-  };
-
-  if (error || !accounts) {
+  if (error) {
     return (
       <Center mih="100vh">
         <Text>Keplr not installed</Text>

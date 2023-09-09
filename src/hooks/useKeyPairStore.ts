@@ -33,6 +33,10 @@ const useKeyPairStore = create<KeyPairState>()(
     }),
     {
       name: 'keyPair',
+      partialize: (state) => ({
+        privateKey: state.privateKey,
+        publicKey: state.publicKey,
+      }),
       storage: {
         getItem: async (name) => {
           const serialized = globalThis.localStorage.getItem(name);

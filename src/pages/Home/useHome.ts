@@ -11,6 +11,7 @@ const useHome = () => {
   const { keplr, accounts, client } = useKeplr({ enabled: ready });
   const { publicKey, generateKeyPair } = useKeyPairStore();
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const start = () => {
     setReady(true);
@@ -33,13 +34,24 @@ const useHome = () => {
             },
           });
         }
-        notifications.show({ message: `Your address is ${account.address}` });
-        navigate('/list', { replace: true });
+        setSuccess(true);
+      } catch {
+        notifications.show({
+          message: 'Failed to register user.',
+          variant: 'error',
+        });
       } finally {
         setLoading(false);
       }
     })();
   }, [accounts, client, generateKeyPair, keplr, loading, navigate, publicKey]);
+
+  useEffect(() => {
+    const account = accounts?.[0];
+    if (!success || !account) return;
+    notifications.show({ message: `Your address is ${account.address}` });
+    navigate('/list', { replace: true });
+  }, [accounts, navigate, success]);
 
   return { start, loading };
 };

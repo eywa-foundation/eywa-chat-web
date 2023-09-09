@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import useKeplr from '../../hooks/useKeplr';
 import { useClipboard } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
+import useIgnite from '../../hooks/useIgnite';
 
 const useJoin = () => {
   const { accounts, error, loading } = useKeplr();
@@ -14,21 +15,30 @@ const useJoin = () => {
   const [relyingServers, setRelyingServers] = useState<
     { value: string; label: string; selected: boolean }[]
   >([]);
+  const client = useIgnite();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const server = e.currentTarget.server.value;
-    if (!server) return;
-    try {
-      setJoining(true);
-      const [account] = accounts ?? [];
-      if (!account) return;
-      const targetAddress = e.currentTarget.address.value;
-      if (!targetAddress) return;
-      navigate(`/chat/${targetAddress}`);
-    } finally {
-      setJoining(false);
-    }
+    if (!server || !client) return;
+    (async () => {
+      try {
+        setJoining(true);
+        const [account] = accounts ?? [];
+        if (!account) return;
+        const targetAddress = e.currentTarget.address.value;
+        if (!targetAddress) return;
+        await client.EywaEywa.tx.sendMsgRegisterUser({
+          value: {
+            creator: account.address,
+            pubkey: '',
+          },
+        });
+        navigate(`/chat/${targetAddress}`);
+      } finally {
+        setJoining(false);
+      }
+    })();
   };
 
   useEffect(() => {

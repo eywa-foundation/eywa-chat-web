@@ -13,7 +13,7 @@
     "@emotion/react": "^11.11.1",
     "@mantine/core": "^6.0.20",
     "@mantine/hooks": "^6.0.20",
-    "eywa-contract-client-ts": "file:../eywa-contract-backup/ts-client",
+    "eywa-client-ts": "file:../eywa-cosmos/ts-client",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.15.0",

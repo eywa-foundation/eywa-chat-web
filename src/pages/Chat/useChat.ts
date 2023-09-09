@@ -1,13 +1,14 @@
-import {
-  useClipboard,
-  useInputState,
-  useListState,
-  useScrollIntoView,
-} from '@mantine/hooks';
+import { useInputState, useListState, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import useKeplr from '../../hooks/useKeplr';
 import { useParams } from 'react-router';
+import useKeyPairStore from '../../hooks/useKeyPairStore';
+import {
+  decryptWithPrivateKey,
+  encryptWithPublicKey,
+  importPublicKey,
+} from '../../utils/crypto';
 
 export interface ChatMessage {
   id: string;
@@ -15,75 +16,6 @@ export interface ChatMessage {
   message: string;
   timestamp: number;
 }
-
-const encryptWithPublicKey = async (message: string, publicKey: CryptoKey) => {
-  return globalThis.crypto.subtle
-    .encrypt({ name: 'RSA-OAEP' }, publicKey, new TextEncoder().encode(message))
-    .then((message) => {
-      const bytes = new Uint8Array(message);
-      const binaryString = String.fromCharCode.apply(null, Array.from(bytes));
-      return globalThis.btoa(binaryString);
-    });
-};
-
-const decryptWithPrivateKey = async (
-  message: string,
-  privateKey: CryptoKey,
-) => {
-  return globalThis.crypto.subtle
-    .decrypt(
-      { name: 'RSA-OAEP' },
-      privateKey,
-      (() => {
-        const binaryString = globalThis.atob(message);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        return bytes;
-      })(),
-    )
-    .then((message) => new TextDecoder().decode(message));
-};
-
-const generateKeyPair = async () => {
-  return globalThis.crypto.subtle.generateKey(
-    {
-      name: 'RSA-OAEP',
-      modulusLength: 2048,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: 'SHA-256',
-    },
-    true,
-    ['encrypt', 'decrypt'],
-  );
-};
-
-const exportPublicKey = async (publicKey: CryptoKey) => {
-  const pem = await globalThis.crypto.subtle.exportKey('spki', publicKey);
-  const pemArray = String.fromCharCode.apply(
-    null,
-    new Uint8Array(pem) as unknown as number[],
-  );
-  return globalThis.btoa(pemArray);
-};
-
-const importPublicKey = async (pem: string) => {
-  return globalThis.crypto.subtle.importKey(
-    'spki',
-    (() => {
-      const binaryString = globalThis.atob(pem);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      return bytes;
-    })(),
-    { name: 'RSA-OAEP', hash: 'SHA-256' },
-    true,
-    ['encrypt'],
-  );
-};
 
 const useChat = () => {
   const [message, setMessage] = useInputState('');
@@ -95,23 +27,15 @@ const useChat = () => {
   const { accounts } = useKeplr();
   const address = accounts?.[0]?.address;
   const { address: targetAddress } = useParams<{ address: string }>();
-  const [keyPair, setKeyPair] = useState<CryptoKeyPair>();
-  const [publicKeyPem, setPublicKeyPem] = useState<string>();
-  const { copy, copied } = useClipboard();
+  const { privateKey, exportPublicKey } = useKeyPairStore();
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
 
   useEffect(() => {
-    if (!publicKeyPem || copied) return;
-    copy(publicKeyPem);
-  }, [copied, copy, publicKeyPem]);
-
-  useEffect(() => {
-    (async () => {
-      const keyPair = await generateKeyPair();
-      setKeyPair(keyPair);
-      setPublicKeyPem(await exportPublicKey(keyPair.publicKey));
-    })();
-  }, []);
+    exportPublicKey().then((v) => {
+      if (!v) return;
+      alert(v);
+    });
+  }, [exportPublicKey]);
 
   useEffect(() => {
     if (!address || !targetAddress) return;
@@ -123,8 +47,8 @@ const useChat = () => {
       from: string;
       content: string;
     }) => {
-      if (from === address || !keyPair) return;
-      decryptWithPrivateKey(content, keyPair.privateKey).then((message) =>
+      if (from === address || !privateKey) return;
+      decryptWithPrivateKey(content, privateKey).then((message) =>
         messageHandler.prepend({
           id: `${globalThis.crypto.randomUUID()}`,
           author: 'Bob',
@@ -137,7 +61,7 @@ const useChat = () => {
     return () => {
       socket.off('chat', handleChat);
     };
-  }, [address, keyPair, messageHandler, socket, targetAddress]);
+  }, [address, messageHandler, privateKey, socket, targetAddress]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

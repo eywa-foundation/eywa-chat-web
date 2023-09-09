@@ -10,7 +10,7 @@ import {
 import useJoin from './useJoin';
 
 const JoinPage = () => {
-  const { copyAddress, handleJoin, error, loading, joining, relyingServers } =
+  const { copyAddress, handleJoin, error, loading, joining, relayServers } =
     useJoin();
 
   if (error) {
@@ -68,7 +68,7 @@ const JoinPage = () => {
           <Select
             label="Relay Server"
             w="100%"
-            data={relyingServers}
+            data={relayServers}
             name="server"
             withAsterisk
             labelProps={{ mb: '0.5em', px: '0.5em' }}

@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router';
 import useKeplr from '../../hooks/useKeplr';
 import { useClipboard } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useKeyPairStore from '../../hooks/useKeyPairStore';
 import useRoomsStore from '../../hooks/useRoomsStore';
+import useRelayServers from '../../hooks/useRelayServers';
 
 const generateRoomId = (address1: string, address2: string) => {
   const [a, b] = [address1, address2].sort();
@@ -16,12 +17,10 @@ const useJoin = () => {
   const { copy } = useClipboard();
   const copyAddress = () => copy(accounts?.[0].address ?? '');
   const [joining, setJoining] = useState(false);
-  const [relyingServers, setRelyingServers] = useState<
-    { value: string; label: string }[]
-  >([]);
   const { client } = useKeplr();
   const { publicKey } = useKeyPairStore();
   const { addRoom } = useRoomsStore();
+  const relayServers = useRelayServers();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,25 +54,7 @@ const useJoin = () => {
     })();
   };
 
-  useEffect(() => {
-    if (!client) return;
-    (async () => {
-      const relayServers = await client.EywaEywa.query.queryGetRelayServer();
-      const servers = [
-        {
-          value: 'cosmos',
-          label: 'Cosmos Network',
-        },
-        ...(relayServers.data.relayServer?.map((server) => ({
-          value: server.location ?? '',
-          label: server.nickname ?? '',
-        })) ?? []),
-      ];
-      setRelyingServers(servers);
-    })();
-  }, [client]);
-
-  return { copyAddress, handleJoin, error, loading, joining, relyingServers };
+  return { copyAddress, handleJoin, error, loading, joining, relayServers };
 };
 
 export default useJoin;

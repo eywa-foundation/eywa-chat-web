@@ -9,7 +9,7 @@ import io from 'socket.io-client';
 import useKeplr from '../../hooks/useKeplr';
 import { useParams } from 'react-router';
 
-interface ChatMessage {
+export interface ChatMessage {
   id: string;
   author: 'Alice' | 'Bob';
   message: string;

@@ -16,7 +16,7 @@ const MainLayout = ({ smallPadding = false }: { smallPadding?: boolean }) => {
         w="100vw"
         maw="500px"
         mih="100vh"
-        px={smallPadding ? '1rem' : '3rem'}
+        px={smallPadding ? '0.25rem' : '3rem'}
         sx={(theme) => ({
           background:
             theme.colorScheme === 'dark'

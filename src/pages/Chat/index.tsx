@@ -54,8 +54,7 @@ const ChatPage = () => {
                 sx: {
                   '& input': {
                     height: '1.5em',
-                    borderRadius: '1em',
-                    paddingInline: '1em',
+                    paddingInline: '0.75em',
                     fontWeight: '600',
                   },
                 },

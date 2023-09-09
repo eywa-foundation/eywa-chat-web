@@ -2,7 +2,7 @@ import { Button, Center, Flex, Text, TextInput } from '@mantine/core';
 import useJoin from './useJoin';
 
 const JoinPage = () => {
-  const { copyAddress, handleJoin, error, loading } = useJoin();
+  const { copyAddress, handleJoin, error, loading, joining } = useJoin();
 
   if (error) {
     return (
@@ -34,7 +34,7 @@ const JoinPage = () => {
           />
           <Flex gap="1rem">
             <Button onClick={copyAddress}>Copy my address</Button>
-            <Button type="submit">
+            <Button type="submit" loading={joining}>
               <Text>Join</Text>
             </Button>
           </Flex>

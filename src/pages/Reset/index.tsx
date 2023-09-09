@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
-const Reset = () => {
+const ResetPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,4 +13,4 @@ const Reset = () => {
   return null;
 };
 
-export default Reset;
+export default ResetPage;

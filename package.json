@@ -13,6 +13,7 @@
     "@emotion/react": "^11.11.1",
     "@mantine/core": "^6.0.20",
     "@mantine/hooks": "^6.0.20",
+    "eywa-contract-client-ts": "file:../eywa-contract/ts-client",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.15.0",
@@ -20,7 +21,9 @@
     "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@keplr-wallet/types": "^0.12.23",
+    "@rollup/plugin-node-resolve": "^15.2.1",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

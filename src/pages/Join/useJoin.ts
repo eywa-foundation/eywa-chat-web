@@ -2,9 +2,12 @@ import { useNavigate } from 'react-router';
 import useKeplr from '../../hooks/useKeplr';
 import { useClipboard } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import useIgnite from '../../hooks/useIgnite';
 import useKeyPairStore from '../../hooks/useKeyPairStore';
-import { exportPublicKey } from '../../utils/crypto';
+
+const generateRoomId = (address1: string, address2: string) => {
+  const [a, b] = [address1, address2].sort();
+  return `${a}:${b}`;
+};
 
 const useJoin = () => {
   const { accounts, error, loading } = useKeplr();
@@ -15,7 +18,7 @@ const useJoin = () => {
   const [relyingServers, setRelyingServers] = useState<
     { value: string; label: string; selected: boolean }[]
   >([]);
-  const client = useIgnite();
+  const { client } = useKeplr();
   const { publicKey } = useKeyPairStore();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -28,10 +31,12 @@ const useJoin = () => {
         const [account] = accounts ?? [];
         const targetAddress = e.currentTarget.address.value;
         if (!account || !targetAddress || !publicKey) return;
-        await client.EywaEywa.tx.sendMsgRegisterUser({
+        await client.EywaEywa.tx.sendMsgCreateHandshake({
           value: {
             creator: account.address,
-            pubkey: await exportPublicKey(publicKey),
+            receiver: targetAddress,
+            roomId: generateRoomId(account.address, targetAddress),
+            serverAddress: server,
           },
         });
         navigate(`/chat/${targetAddress}`);
@@ -43,6 +48,10 @@ const useJoin = () => {
 
   useEffect(() => {
     const servers = [
+      {
+        value: 'cosmos',
+        label: 'Cosmos Network',
+      },
       {
         value: 'wss://relayer.eytukan.eywa.jaehong21.com',
         label: 'Eytukan',

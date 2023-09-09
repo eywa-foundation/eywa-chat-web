@@ -27,15 +27,8 @@ const useChat = () => {
   const { accounts } = useKeplr();
   const address = accounts?.[0]?.address;
   const { address: targetAddress } = useParams<{ address: string }>();
-  const { privateKey, exportPublicKey } = useKeyPairStore();
+  const { privateKey } = useKeyPairStore();
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
-
-  useEffect(() => {
-    exportPublicKey().then((v) => {
-      if (!v) return;
-      alert(v);
-    });
-  }, [exportPublicKey]);
 
   useEffect(() => {
     if (!address || !targetAddress) return;

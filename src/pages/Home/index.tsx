@@ -24,7 +24,7 @@ const Logo = () => (
 );
 
 const HomePage = () => {
-  const { start } = useHome();
+  const { start, loading } = useHome();
   return (
     <Flex h="100%" direction="column" align="center">
       <Flex style={{ flex: 1 }} align="center">
@@ -35,6 +35,7 @@ const HomePage = () => {
       </Flex>
       <Flex direction="column" my="4rem" gap="1rem">
         <Button
+          loading={loading}
           onClick={start}
           variant="gradient"
           gradient={{ from: '#87BCF7', to: '#C07FF7', deg: 130 }}

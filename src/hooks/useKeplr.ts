@@ -1,3 +1,4 @@
+import { Client } from 'eywa-client-ts';
 import {
   AccountData,
   Keplr,
@@ -10,6 +11,8 @@ import { useEffect, useState } from 'react';
 declare global {
   interface Window extends KeplrWindow {}
 }
+
+type Newed<T> = T extends new (...args: never[]) => infer R ? R : never;
 
 const useKeplr = ({
   chainId = 'eywa',
@@ -26,6 +29,21 @@ const useKeplr = ({
   const [offlineSigner, setOfflineSigner] = useState<
     OfflineAminoSigner | OfflineDirectSigner
   >();
+  const [client, setClient] = useState<Newed<typeof Client>>();
+
+  useEffect(() => {
+    if (!offlineSigner) return;
+    setClient(
+      new Client(
+        {
+          apiURL: 'http://localhost:1317',
+          rpcURL: 'http://localhost:26657',
+          prefix: 'cosmos',
+        },
+        offlineSigner,
+      ),
+    );
+  }, [offlineSigner]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -134,6 +152,7 @@ const useKeplr = ({
     error,
     offlineSigner,
     accounts,
+    client,
   };
 };
 

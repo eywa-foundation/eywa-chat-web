@@ -97,9 +97,13 @@ const useChat = () => {
   const { address: targetAddress } = useParams<{ address: string }>();
   const [keyPair, setKeyPair] = useState<CryptoKeyPair>();
   const [publicKeyPem, setPublicKeyPem] = useState<string>();
-  const { copy } = useClipboard();
-  const copyPublicKey = () => copy(publicKeyPem);
+  const { copy, copied } = useClipboard();
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
+
+  useEffect(() => {
+    if (!publicKeyPem || copied) return;
+    copy(publicKeyPem);
+  }, [copied, copy, publicKeyPem]);
 
   useEffect(() => {
     (async () => {
@@ -167,7 +171,6 @@ const useChat = () => {
     message,
     setMessage,
     messages,
-    copyPublicKey,
   };
 };
 

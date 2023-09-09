@@ -11,7 +11,13 @@ declare global {
   interface Window extends KeplrWindow {}
 }
 
-const useKeplr = (chainId = 'eywacontract') => {
+const useKeplr = ({
+  chainId = 'eywacontract',
+  enabled = true,
+}: {
+  chainId?: string;
+  enabled?: boolean;
+} = {}) => {
   const [keplr, setKeplr] = useState<Keplr>();
   const [solved, setSolved] = useState(false);
   const [error, setError] = useState<Error>();
@@ -20,12 +26,9 @@ const useKeplr = (chainId = 'eywacontract') => {
   const [offlineSigner, setOfflineSigner] = useState<
     OfflineAminoSigner | OfflineDirectSigner
   >();
-  // (
-  //   () => solvedKeplr?.getOfflineSignerAuto(chainId),
-  //   [chainId, solvedKeplr],
-  // );
 
   useEffect(() => {
+    if (!enabled) return;
     if (window.keplr) {
       setKeplr(window.keplr as Keplr);
     }
@@ -47,7 +50,7 @@ const useKeplr = (chainId = 'eywacontract') => {
       document.removeEventListener('readystatechange', stateChangeHandler);
     };
     document.addEventListener('readystatechange', stateChangeHandler);
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
     if (!keplr) return;

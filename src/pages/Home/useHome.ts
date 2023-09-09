@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router';
 import useKeplr from '../../hooks/useKeplr';
 import { useEffect, useState } from 'react';
+import { notifications } from '@mantine/notifications';
 import useKeyPairStore from '../../hooks/useKeyPairStore';
 
 const useHome = () => {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
-  const { keplr } = useKeplr({ enabled: ready });
+  const { keplr, accounts } = useKeplr({ enabled: ready });
   const { publicKey, generateKeyPair } = useKeyPairStore();
 
   const start = () => {
@@ -15,13 +16,19 @@ const useHome = () => {
 
   useEffect(() => {
     if (publicKey) return;
-    generateKeyPair();
   }, [generateKeyPair, publicKey]);
 
   useEffect(() => {
-    if (!keplr || !publicKey) return;
-    navigate('/list');
-  }, [keplr, navigate, publicKey]);
+    const account = accounts?.[0];
+    if (!keplr || !account) return;
+
+    if (!publicKey) {
+      generateKeyPair();
+      notifications.show({ message: `Key pair generated.` });
+    }
+    notifications.show({ message: `Your address is ${account.address}` });
+    navigate('/list', { replace: true });
+  }, [accounts, generateKeyPair, keplr, navigate, publicKey]);
 
   return { start };
 };

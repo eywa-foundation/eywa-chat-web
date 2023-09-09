@@ -1,4 +1,5 @@
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import Router from './router';
 
 const App = () => {
@@ -8,6 +9,7 @@ const App = () => {
       withNormalizeCSS
       theme={{ colorScheme: 'dark' }}
     >
+      <Notifications />
       <Router />
     </MantineProvider>
   );

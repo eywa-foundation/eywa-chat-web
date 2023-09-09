@@ -24,7 +24,7 @@ const importKey = async (pem: string, type: 'spki' | 'pkcs8') =>
     })(),
     { name: 'RSA-OAEP', hash: 'SHA-256' },
     true,
-    ['encrypt'],
+    type === 'spki' ? ['encrypt'] : ['decrypt'],
   );
 
 const exportKey = async (key: CryptoKey, type: 'spki' | 'pkcs8') => {

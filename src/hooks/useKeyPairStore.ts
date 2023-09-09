@@ -18,8 +18,8 @@ interface KeyPairState {
 const useKeyPairStore = create<KeyPairState>()(
   persist(
     (set, get) => ({
-      publicKey: null,
-      privateKey: null,
+      publicKey: null as CryptoKey | null,
+      privateKey: null as CryptoKey | null,
       generateKeyPair: async () => {
         const { publicKey, privateKey } = await generateKeyPair();
         set({ publicKey, privateKey });

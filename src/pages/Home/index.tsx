@@ -24,7 +24,7 @@ const HomePage = () => {
           <Text size="2rem">Eywa</Text>
         </Flex>
       </Flex>
-      <Flex direction="column" my="2rem" gap=".25rem">
+      <Flex direction="column" my="2rem" gap="1rem">
         <Button onClick={start}>
           <Text>Starts with Wallet</Text>
         </Button>

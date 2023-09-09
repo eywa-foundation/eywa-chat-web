@@ -24,7 +24,7 @@ const ChatPage = () => {
       >
         <Flex direction="column" gap="1rem" style={{ height: '100%' }}>
           <Box style={{ flex: 1, overflow: 'scroll' }} ref={scrollableRef}>
-            <Flex direction="column-reverse" gap=".25em">
+            <Flex direction="column-reverse" gap=".4em">
               <span ref={targetRef} />
               {messages.map((message) => (
                 <Box
@@ -42,8 +42,11 @@ const ChatPage = () => {
                       message.author === 'Alice' ? 'flex-end' : 'flex-start',
                     borderRadius: '0.5rem',
                   })}
+                  maw="80%"
                 >
-                  <Text color="white">{message.message}</Text>
+                  <Text color="white" style={{ wordBreak: 'break-all' }}>
+                    {message.message}
+                  </Text>
                 </Box>
               ))}
             </Flex>
@@ -51,6 +54,13 @@ const ChatPage = () => {
           <form onSubmit={handleSendMessage}>
             <Flex gap="1em">
               <TextInput
+                styles={(theme) => ({
+                  input: {
+                    '&:focus-within': {
+                      borderColor: theme.colors.gray[7],
+                    },
+                  },
+                })}
                 style={{ flex: 1 }}
                 value={message}
                 onChange={setMessage}

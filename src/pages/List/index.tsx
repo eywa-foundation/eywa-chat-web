@@ -8,6 +8,7 @@ import {
 } from '@mantine/core';
 import useList, { Room } from './useList';
 import { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 const HealthyCircle = ({ healthy }: { healthy: boolean }) => (
   <Box
@@ -60,9 +61,11 @@ const ListPage = () => {
       <Flex direction="column">
         {rooms?.map((room) => (
           <Fragment key={room.roomId}>
-            <UnstyledButton>
-              <ChatList room={room} />
-            </UnstyledButton>
+            <Link to={`/chat/${room.opponent}`}>
+              <UnstyledButton style={{ width: '100%' }}>
+                <ChatList room={room} />
+              </UnstyledButton>
+            </Link>
             <Divider />
           </Fragment>
         ))}

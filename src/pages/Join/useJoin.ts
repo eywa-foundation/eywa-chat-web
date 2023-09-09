@@ -3,19 +3,20 @@ import useKeplr from '../../hooks/useKeplr';
 import { useClipboard } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import useIgnite from '../../hooks/useIgnite';
+import useKeyPairStore from '../../hooks/useKeyPairStore';
+import { exportPublicKey } from '../../utils/crypto';
 
 const useJoin = () => {
   const { accounts, error, loading } = useKeplr();
   const navigate = useNavigate();
   const { copy } = useClipboard();
-  const copyAddress = () => {
-    copy(accounts?.[0].address ?? '');
-  };
+  const copyAddress = () => copy(accounts?.[0].address ?? '');
   const [joining, setJoining] = useState(false);
   const [relyingServers, setRelyingServers] = useState<
     { value: string; label: string; selected: boolean }[]
   >([]);
   const client = useIgnite();
+  const { publicKey } = useKeyPairStore();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,13 +26,12 @@ const useJoin = () => {
       try {
         setJoining(true);
         const [account] = accounts ?? [];
-        if (!account) return;
         const targetAddress = e.currentTarget.address.value;
-        if (!targetAddress) return;
+        if (!account || !targetAddress || !publicKey) return;
         await client.EywaEywa.tx.sendMsgRegisterUser({
           value: {
             creator: account.address,
-            pubkey: '',
+            pubkey: await exportPublicKey(publicKey),
           },
         });
         navigate(`/chat/${targetAddress}`);

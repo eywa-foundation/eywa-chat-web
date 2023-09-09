@@ -58,7 +58,6 @@ const useHome = () => {
 
   useEffect(() => {
     const account = accounts?.[0];
-    console.log(success);
     if (!success || !account) return;
     notifications.show({ message: `Your address is ${account.address}` });
     navigate('/list', { replace: true });

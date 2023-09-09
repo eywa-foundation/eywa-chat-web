@@ -9,6 +9,7 @@ import {
   encryptWithPublicKey,
   importPublicKey,
 } from '../../utils/crypto';
+import useRoomsStore from '../../hooks/useRoomsStore';
 
 export interface ChatMessage {
   id: string;
@@ -29,9 +30,23 @@ const useChat = () => {
   const { address: targetAddress } = useParams<{ address: string }>();
   const { privateKey } = useKeyPairStore();
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
+  const { rooms } = useRoomsStore();
+  const room = rooms.find((room) => room.opponent === targetAddress);
+  const isChain = !(room?.server.endsWith('.com') ?? false);
+  const { client } = useKeplr();
 
   useEffect(() => {
-    if (!address || !targetAddress) return;
+    if (!client || !targetAddress) return;
+    (async () => {
+      const user = await client.EywaEywa.query.queryGetUser(targetAddress);
+      const key = user.data.user?.pubkey;
+      if (!key) return;
+      setBobPublicKey(await importPublicKey(key));
+    })();
+  }, [client, targetAddress]);
+
+  useEffect(() => {
+    if (!address || !targetAddress || isChain) return;
     socket.emit('join', { from: address, to: targetAddress });
     const handleChat = ({
       from,
@@ -54,18 +69,23 @@ const useChat = () => {
     return () => {
       socket.off('chat', handleChat);
     };
-  }, [address, messageHandler, privateKey, socket, targetAddress]);
+  }, [address, isChain, messageHandler, privateKey, socket, targetAddress]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message || !address || !targetAddress) return;
-    if (!bobPublicKey) {
-      importPublicKey(message).then(setBobPublicKey);
-      setMessage('');
-      return;
-    }
+    if (!message || !address || !targetAddress || !bobPublicKey) return;
     encryptWithPublicKey(message, bobPublicKey).then((content) =>
-      socket.emit('chat', { from: address, to: targetAddress, content }),
+      isChain
+        ? void client?.EywaEywa.tx.sendMsgCreateChat({
+            value: {
+              creator: address,
+              message: content,
+              receiver: targetAddress,
+              roomId: room?.roomId ?? '',
+              time: Date.now(),
+            },
+          })
+        : socket.emit('chat', { from: address, to: targetAddress, content }),
     );
 
     messageHandler.prepend({
@@ -78,10 +98,47 @@ const useChat = () => {
   };
 
   useEffect(() => {
+    if (!isChain) return;
+    let cancelled = false;
+    const roomId = room?.roomId ?? '';
+    if (!client || !roomId || !privateKey) return;
+    const fetch = async () => {
+      const chat = await client.EywaEywa.query.queryGetChat(roomId);
+      const bobMessages = (
+        chat.data.chat?.filter(
+          (chat) =>
+            chat.time &&
+            chat.sender !== address &&
+            !(
+              messages
+                .map((m) => m.timestamp.toString())
+                .includes(chat.time.toString()) ?? false
+            ),
+        ) ?? []
+      ).map(async (chat) => ({
+        id: globalThis.crypto.randomUUID(),
+        author: 'Bob' as const,
+        message: await decryptWithPrivateKey(chat.message ?? '', privateKey),
+        timestamp: Number.parseInt(chat.time ?? '0'),
+      }));
+      if (bobMessages.length > 0 && !cancelled) {
+        messageHandler.prepend(...(await Promise.all(bobMessages)));
+      }
+    };
+    const interval = setInterval(fetch, 1000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [address, client, isChain, messageHandler, messages, privateKey, room]);
+
+  useEffect(() => {
     scrollIntoView();
   }, [messages, scrollIntoView]);
 
   return {
+    room,
     targetRef,
     scrollableRef,
     handleSendMessage,

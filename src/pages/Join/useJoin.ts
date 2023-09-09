@@ -7,7 +7,7 @@ import useRoomsStore from '../../hooks/useRoomsStore';
 
 const generateRoomId = (address1: string, address2: string) => {
   const [a, b] = [address1, address2].sort();
-  return `${a}:${b}`;
+  return `${a}_${b}`;
 };
 
 const useJoin = () => {

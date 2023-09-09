@@ -38,12 +38,14 @@ const ListPage = () => {
 
   return (
     <Flex direction="column" py="1rem" gap="1rem">
-      <Text size="1.75rem" weight="bold">
-        Select Chatting Room
-        <br />
-        or Create One
+      <Text size="1.5rem" weight="bold">
+        Select Chatting Room or Create One
       </Text>
-      <Button onClick={create}>
+      <Button
+        onClick={create}
+        variant="gradient"
+        gradient={{ from: '#87BCF7', to: '#C07FF7', deg: 130 }}
+      >
         <Text>
           <b>+</b> Create New Room
         </Text>

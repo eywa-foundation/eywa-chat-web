@@ -18,7 +18,7 @@ const JoinPage = () => {
   return (
     <Flex h="100%" direction="column" justify="center">
       <form onSubmit={handleJoin}>
-        <Flex direction="column" gap="1rem" align="center">
+        <Flex direction="column" gap="1.5rem" align="center">
           <TextInput
             label="Enter Opponent Name"
             placeholder="Bob"
@@ -26,6 +26,7 @@ const JoinPage = () => {
             w="100%"
             withAsterisk
             required
+            labelProps={{ mb: '0.5em' }}
           />
           <TextInput
             label="Enter Opponent Address"
@@ -34,6 +35,7 @@ const JoinPage = () => {
             w="100%"
             withAsterisk
             required
+            labelProps={{ mb: '0.5em' }}
           />
           <Select
             label="Select Relying Server"
@@ -42,6 +44,7 @@ const JoinPage = () => {
             data={relyingServers}
             name="server"
             withAsterisk
+            labelProps={{ mb: '0.5em' }}
           />
           <Flex gap="1rem">
             <Button onClick={copyAddress}>Copy my address</Button>

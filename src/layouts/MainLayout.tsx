@@ -16,7 +16,7 @@ const MainLayout = () => {
         w="100vw"
         maw="500px"
         mih="100vh"
-        px="1rem"
+        px="3rem"
         sx={(theme) => ({
           background:
             theme.colorScheme === 'dark'

@@ -22,7 +22,7 @@ const ChatPage = () => {
     >
       <Flex direction="column" gap="1rem" style={{ height: '100%' }}>
         <Box style={{ flex: 1, overflow: 'scroll' }} ref={scrollableRef}>
-          <Flex direction="column-reverse" gap=".25em" pr="1em">
+          <Flex direction="column-reverse" gap=".25em">
             <span ref={targetRef} />
             {messages.map((message) => (
               <Box

@@ -88,12 +88,6 @@ const useChat = () => {
         : socket.emit('chat', { from: address, to: targetAddress, content }),
     );
 
-    messageHandler.prepend({
-      id: `${globalThis.crypto.randomUUID()}`,
-      author: 'Alice',
-      message,
-      timestamp: Date.now(),
-    });
     addChat(room?.roomId ?? '', message);
     setMessage('');
   };
@@ -152,7 +146,7 @@ const useChat = () => {
         id: `${globalThis.crypto.randomUUID()}`,
       })) ?? []),
       ...messages,
-    ].sort((a, b) => a.timestamp - b.timestamp),
+    ].sort((a, b) => b.timestamp - a.timestamp),
   };
 };
 

@@ -13,7 +13,9 @@ const MainLayout = () => {
       })}
     >
       <Container
+        w="100vw"
         maw="500px"
+        mih="100vh"
         px="1rem"
         sx={(theme) => ({
           background:

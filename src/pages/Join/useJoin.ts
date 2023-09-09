@@ -3,6 +3,7 @@ import useKeplr from '../../hooks/useKeplr';
 import { useClipboard } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import useKeyPairStore from '../../hooks/useKeyPairStore';
+import useRoomsStore from '../../hooks/useRoomsStore';
 
 const generateRoomId = (address1: string, address2: string) => {
   const [a, b] = [address1, address2].sort();
@@ -20,6 +21,7 @@ const useJoin = () => {
   >([]);
   const { client } = useKeplr();
   const { publicKey } = useKeyPairStore();
+  const { addRoom } = useRoomsStore();
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,6 +40,13 @@ const useJoin = () => {
             roomId: generateRoomId(account.address, targetAddress),
             serverAddress: server,
           },
+        });
+        addRoom({
+          opponent: targetAddress,
+          roomId: generateRoomId(account.address, targetAddress),
+          server,
+          healthy: true,
+          lastMessage: '',
         });
         navigate(`/chat/${targetAddress}`);
       } finally {

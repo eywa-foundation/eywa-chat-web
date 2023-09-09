@@ -34,7 +34,7 @@ const ChatList = ({ room }: { room: Room }) => {
         >
           {room.opponent}
         </Text>
-        <Text>{room.lastMessage}</Text>
+        <Text>{room.messages[room.messages.length - 1]?.message}</Text>
         <Text>{room.server}</Text>
       </Flex>
       <HealthyCircle healthy={room.healthy} />

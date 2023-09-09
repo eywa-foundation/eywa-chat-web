@@ -6,7 +6,7 @@ import useIgnite from '../../hooks/useIgnite';
 const JoinPage = () => {
   const { accounts, error, loading } = useKeplr();
   const navigate = useNavigate();
-  useIgnite();
+  useIgnite((!error && accounts?.length && !loading) || false);
 
   const handleJoin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,6 +19,7 @@ const JoinPage = () => {
     return (
       <Center mih="100vh">
         <Text>Keplr not installed</Text>
+        <Text>{JSON.stringify(error)}</Text>
       </Center>
     );
   }

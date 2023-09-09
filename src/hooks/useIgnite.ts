@@ -1,23 +1,39 @@
 import { Client } from 'eywa-contract-client-ts';
 import { useEffect, useState } from 'react';
+import useKeplr from './useKeplr';
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 
-const useIgnite = () => {
+const useIgnite = (enable: boolean) => {
+  const { offlineSigner } = useKeplr();
   const [client] = useState(
     new Client({
       apiURL: 'http://localhost:1317',
       rpcURL: 'http://localhost:26657',
-      prefix: 'cosmos',
+      prefix: 'celestia',
     }),
   );
 
   useEffect(() => {
+    if (!enable || !offlineSigner) return;
     (async () => {
-      const balances = await client.CosmosBankV1Beta1.query.queryAllBalances(
-        'cosmos1ly65awg79mydn9gf3m5ys5cren3f8k4l3xtr40',
+      const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
+        'struggle infant prefer soda patch client usage cup despair decline face voyage change pattern transfer grocery artwork marriage test slice hurry bridge sugar retreat',
+        { prefix: 'celestia' },
+      );
+
+      client.useSigner(wallet);
+      console.log(await offlineSigner.getAccounts());
+      const balances = await client.EywacontractEywacontract.tx.sendMsgRegister(
+        {
+          value: {
+            creator: 'celstia18efwkhkw8w9eq672cexeyf49dsv66lnrkepmgm',
+            pubkey: 'asdf',
+          },
+        },
       );
       console.log(balances);
     })();
-  }, [client]);
+  }, [client, enable, offlineSigner]);
 };
 
 export default useIgnite;

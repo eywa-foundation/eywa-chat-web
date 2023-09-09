@@ -1,20 +1,29 @@
-import { AccountData, Keplr, Window as KeplrWindow } from '@keplr-wallet/types';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  AccountData,
+  Keplr,
+  Window as KeplrWindow,
+  OfflineAminoSigner,
+  OfflineDirectSigner,
+} from '@keplr-wallet/types';
+import { useEffect, useState } from 'react';
 
 declare global {
   interface Window extends KeplrWindow {}
 }
 
-const useKeplr = (chainId = 'cosmoshub-4') => {
+const useKeplr = (chainId = 'eywacontract') => {
   const [keplr, setKeplr] = useState<Keplr>();
   const [solved, setSolved] = useState(false);
   const [error, setError] = useState<Error>();
   const [accounts, setAccounts] = useState<readonly AccountData[]>();
   const solvedKeplr = (!error && solved && keplr) || undefined;
-  const offlineSigner = useMemo(
-    () => solvedKeplr?.getOfflineSigner(chainId),
-    [chainId, solvedKeplr],
-  );
+  const [offlineSigner, setOfflineSigner] = useState<
+    OfflineAminoSigner | OfflineDirectSigner
+  >();
+  // (
+  //   () => solvedKeplr?.getOfflineSignerAuto(chainId),
+  //   [chainId, solvedKeplr],
+  // );
 
   useEffect(() => {
     if (window.keplr) {
@@ -44,6 +53,50 @@ const useKeplr = (chainId = 'cosmoshub-4') => {
     if (!keplr) return;
     (async () => {
       try {
+        await keplr.experimentalSuggestChain({
+          chainId,
+          chainName: chainId,
+          rpc: 'http://localhost:26657',
+          rest: 'http://localhost:1317',
+          bip44: {
+            coinType: 118,
+          },
+          bech32Config: {
+            bech32PrefixAccAddr: 'celestia',
+            bech32PrefixAccPub: 'celestia' + 'pub',
+            bech32PrefixValAddr: 'celestia' + 'valoper',
+            bech32PrefixValPub: 'celestia' + 'valoperpub',
+            bech32PrefixConsAddr: 'celestia' + 'valcons',
+            bech32PrefixConsPub: 'celestia' + 'valconspub',
+          },
+          currencies: [
+            {
+              coinDenom: 'TIA',
+              coinMinimalDenom: 'utia',
+              coinDecimals: 6,
+              coinGeckoId: 'celestia',
+            },
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: 'TIA',
+              coinMinimalDenom: 'utia',
+              coinDecimals: 6,
+              coinGeckoId: 'celestia',
+              gasPriceStep: {
+                low: 0.1,
+                average: 0.2,
+                high: 0.4,
+              },
+            },
+          ],
+          stakeCurrency: {
+            coinDenom: 'TIA',
+            coinMinimalDenom: 'utia',
+            coinDecimals: 6,
+            coinGeckoId: 'celestia',
+          },
+        });
         await keplr.enable(chainId);
         setSolved(true);
       } catch (e) {
@@ -63,6 +116,14 @@ const useKeplr = (chainId = 'cosmoshub-4') => {
       }
     })();
   }, [offlineSigner]);
+
+  useEffect(() => {
+    (async () => {
+      const signer = await solvedKeplr?.getOfflineSignerAuto(chainId);
+      if (!signer) return;
+      setOfflineSigner(signer);
+    })();
+  }, [chainId, solvedKeplr]);
 
   return {
     loading: !solved,

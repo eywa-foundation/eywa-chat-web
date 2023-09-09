@@ -34,7 +34,7 @@ const ChatList = ({ room }: { room: Room }) => {
 };
 
 const ListPage = () => {
-  const { rooms } = useList();
+  const { rooms, create } = useList();
 
   return (
     <Flex direction="column" py="1rem" gap="1rem">
@@ -43,7 +43,7 @@ const ListPage = () => {
         <br />
         or Create One
       </Text>
-      <Button>
+      <Button onClick={create}>
         <Text>
           <b>+</b> Create New Room
         </Text>

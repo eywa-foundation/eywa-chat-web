@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export interface Room {
   opponent: string;
@@ -10,6 +11,7 @@ export interface Room {
 
 const useList = () => {
   const [rooms, setRooms] = useState<Room[]>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setRooms(
@@ -23,7 +25,11 @@ const useList = () => {
     );
   }, []);
 
-  return { rooms };
+  const create = () => {
+    navigate('/join');
+  };
+
+  return { rooms, create };
 };
 
 export default useList;

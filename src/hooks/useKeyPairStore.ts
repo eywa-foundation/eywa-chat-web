@@ -12,6 +12,7 @@ interface KeyPairState {
   publicKey: CryptoKey | null;
   privateKey: CryptoKey | null;
   generateKeyPair: () => Promise<CryptoKeyPair>;
+  setKeyPair: (keyPair: CryptoKeyPair) => void;
   exportPublicKey: () => Promise<string>;
 }
 
@@ -20,10 +21,9 @@ const useKeyPairStore = create<KeyPairState>()(
     (set, get) => ({
       publicKey: null as CryptoKey | null,
       privateKey: null as CryptoKey | null,
-      generateKeyPair: async () => {
-        const { publicKey, privateKey } = await generateKeyPair();
-        set({ publicKey, privateKey });
-        return { publicKey, privateKey };
+      generateKeyPair,
+      setKeyPair: (keyPair: CryptoKeyPair) => {
+        set({ publicKey: keyPair.publicKey, privateKey: keyPair.privateKey });
       },
       exportPublicKey: async () => {
         const publicKey = get().publicKey;

@@ -9,7 +9,7 @@ const useHome = () => {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const { keplr, accounts, client } = useKeplr({ enabled: ready });
-  const { publicKey, generateKeyPair } = useKeyPairStore();
+  const { publicKey, generateKeyPair, setKeyPair } = useKeyPairStore();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -33,6 +33,7 @@ const useHome = () => {
               pubkey: await exportPublicKey(keyPair.publicKey),
             },
           });
+          setKeyPair(keyPair);
         }
         setSuccess(true);
       } catch {
@@ -44,10 +45,20 @@ const useHome = () => {
         setLoading(false);
       }
     })();
-  }, [accounts, client, generateKeyPair, keplr, loading, navigate, publicKey]);
+  }, [
+    accounts,
+    client,
+    generateKeyPair,
+    keplr,
+    loading,
+    navigate,
+    publicKey,
+    setKeyPair,
+  ]);
 
   useEffect(() => {
     const account = accounts?.[0];
+    console.log(success);
     if (!success || !account) return;
     notifications.show({ message: `Your address is ${account.address}` });
     navigate('/list', { replace: true });

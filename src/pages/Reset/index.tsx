@@ -7,9 +7,13 @@ const ResetPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    useRoomsStore.persist.clearStorage();
-    useKeyPairStore.persist.clearStorage();
-    navigate('/');
+    (async () => {
+      await useRoomsStore.persist.rehydrate();
+      useRoomsStore.persist.clearStorage();
+      await useKeyPairStore.persist.rehydrate();
+      useKeyPairStore.persist.clearStorage();
+      location.href = '/';
+    })();
   }, [navigate]);
 
   return null;

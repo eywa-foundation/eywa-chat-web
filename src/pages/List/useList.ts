@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import useRoomsStore from '../../hooks/useRoomsStore';
+import useKeplr from '../../hooks/useKeplr';
 
 export interface Room {
   opponent: string;
@@ -11,20 +12,38 @@ export interface Room {
 }
 
 const useList = () => {
-  const { rooms: persistRooms } = useRoomsStore();
-  const [rooms, setRooms] = useState<Room[]>();
+  const { rooms, addRoom } = useRoomsStore();
   const navigate = useNavigate();
+  const { client, accounts } = useKeplr();
 
   useEffect(() => {
-    if (!persistRooms) return;
-    setRooms(
-      persistRooms.map((room) => ({
-        ...room,
-        healthy: Math.random() < 0.9,
-        lastMessage: 'lastMessage',
-      })),
-    );
-  }, [persistRooms]);
+    const account = accounts?.[0];
+    if (!client || !account) return;
+    const pooling = async () => {
+      const handshake = await client.EywaEywa.query.queryGetHandshake(
+        account.address,
+      );
+      const notOpenedShakes = handshake.data.handshake?.filter(
+        (shake) =>
+          shake.roomId &&
+          !(rooms?.map((room) => room.roomId).includes(shake.roomId) ?? false),
+      );
+      notOpenedShakes?.forEach((shake) => {
+        addRoom({
+          opponent: shake.sender ?? '',
+          roomId: shake.roomId ?? '',
+          server: shake.serverAddress ?? '',
+          healthy: true,
+          lastMessage: '',
+        });
+      });
+    };
+    const interval = setInterval(pooling, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [accounts, addRoom, client, rooms]);
 
   const create = () => {
     navigate('/join');

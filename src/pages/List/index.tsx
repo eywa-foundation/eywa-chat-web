@@ -17,15 +17,22 @@ const HealthyCircle = ({ healthy }: { healthy: boolean }) => (
       height: '0.75rem',
       borderRadius: '50%',
       backgroundColor: healthy ? 'green' : 'red',
+      flexShrink: 0,
+      flexBasis: '0.75rem',
     }}
   />
 );
 
 const ChatList = ({ room }: { room: Room }) => {
   return (
-    <Flex my="1rem" justify="space-between" align="center">
-      <Flex direction="column">
-        <Text weight="bold">{room.opponent}</Text>
+    <Flex my="1rem" justify="space-between" align="center" gap="1em">
+      <Flex direction="column" style={{ overflow: 'hidden' }}>
+        <Text
+          weight="bold"
+          style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+        >
+          {room.opponent}
+        </Text>
         <Text>{room.lastMessage}</Text>
       </Flex>
       <HealthyCircle healthy={room.healthy} />

@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { Room } from '../pages/List/useList';
 
 interface RoomsState {
-  rooms: Pick<Room, 'opponent' | 'roomId' | 'server'>[];
+  rooms: Room[];
   addRoom: (room: Room) => void;
 }
 

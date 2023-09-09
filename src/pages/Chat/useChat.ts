@@ -30,7 +30,7 @@ const useChat = () => {
   const { address: targetAddress } = useParams<{ address: string }>();
   const { privateKey } = useKeyPairStore();
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
-  const { rooms } = useRoomsStore();
+  const { rooms, addChat } = useRoomsStore();
   const room = rooms.find((room) => room.opponent === targetAddress);
   const isChain = !(room?.server.endsWith('.com') ?? false);
   const { client } = useKeplr();
@@ -94,6 +94,7 @@ const useChat = () => {
       message,
       timestamp: Date.now(),
     });
+    addChat(room?.roomId ?? '', message);
     setMessage('');
   };
 
@@ -144,7 +145,14 @@ const useChat = () => {
     handleSendMessage,
     message,
     setMessage,
-    messages,
+    messages: [
+      ...(room?.messages.map((m) => ({
+        ...m,
+        author: 'Alice',
+        id: `${globalThis.crypto.randomUUID()}`,
+      })) ?? []),
+      ...messages,
+    ].sort((a, b) => a.timestamp - b.timestamp),
   };
 };
 

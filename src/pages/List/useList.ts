@@ -8,7 +8,7 @@ export interface Room {
   roomId: string;
   server: string;
   healthy: boolean;
-  lastMessage: string;
+  messages: { message: string; timestamp: number }[];
 }
 
 const useList = () => {
@@ -34,7 +34,7 @@ const useList = () => {
           roomId: shake.roomId ?? '',
           server: shake.serverAddress ?? '',
           healthy: true,
-          lastMessage: '',
+          messages: [],
         });
       });
     };

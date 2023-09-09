@@ -46,7 +46,7 @@ const useJoin = () => {
           roomId: generateRoomId(account.address, targetAddress),
           server,
           healthy: true,
-          lastMessage: '',
+          messages: [],
         });
         navigate(`/chat/${targetAddress}`);
       } finally {

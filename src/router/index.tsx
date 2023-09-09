@@ -4,6 +4,7 @@ import JoinPage from '../pages/Join';
 import ChatHistory from '../pages/ChatHistory';
 import MainLayout from '../layouts/MainLayout';
 import HomePage from '../pages/Home';
+import ListPage from '../pages/List';
 
 const Router = () => {
   return (
@@ -11,6 +12,7 @@ const Router = () => {
       <Routes>
         <Route element={<MainLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="list" element={<ListPage />} />
           <Route path="join" element={<JoinPage />} />
           <Route path="chat/:address" element={<ChatPage />} />
           <Route path="history" element={<ChatHistory />} />

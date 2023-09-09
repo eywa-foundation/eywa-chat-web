@@ -36,8 +36,8 @@ const useKeplr = ({
     setClient(
       new Client(
         {
-          apiURL: 'http://localhost:1317',
-          rpcURL: 'http://localhost:26657',
+          apiURL: 'http://node.celestia.eywa.jaehong21.com:1317',
+          rpcURL: 'http://node.celestia.eywa.jaehong21.com:26657',
           prefix: 'cosmos',
         },
         offlineSigner,
@@ -77,8 +77,8 @@ const useKeplr = ({
         await keplr.experimentalSuggestChain({
           chainId,
           chainName: chainId,
-          rpc: 'http://localhost:26657',
-          rest: 'http://localhost:1317',
+          rpc: 'http://node.celestia.eywa.jaehong21.com:26657',
+          rest: 'http://node.celestia.eywa.jaehong21.com:1317',
           bip44: {
             coinType: 118,
           },

@@ -47,7 +47,7 @@ const useJoin = () => {
           healthy: true,
           messages: [],
         });
-        navigate(`/chat/${targetAddress}`);
+        navigate('/list');
       } finally {
         setJoining(false);
       }

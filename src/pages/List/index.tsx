@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import HealthyCircle from '../../components/HealthyCircle';
 
-const ChatList = ({ room }: { room: Room & { nickname: string } }) => {
+const ChatList = ({ room }: { room: Room & { nickname?: string } }) => {
   return (
     <Flex my="1rem" justify="space-between" align="center" gap="1em">
       <Flex direction="column" style={{ overflow: 'hidden' }}>
@@ -40,16 +40,18 @@ const ListPage = () => {
         </Text>
       </Button>
       <Flex direction="column">
-        {rooms?.map((room) => (
-          <Fragment key={room.roomId}>
-            <Link to={`/chat/${room.opponent}?server=${room.nickname}`}>
-              <UnstyledButton style={{ width: '100%' }}>
-                <ChatList room={room} />
-              </UnstyledButton>
-            </Link>
-            <Divider />
-          </Fragment>
-        ))}
+        {rooms
+          ?.filter((room) => room.nickname)
+          .map((room) => (
+            <Fragment key={`${room.roomId}-${room.nickname}`}>
+              <Link to={`/chat/${room.opponent}?server=${room.nickname}`}>
+                <UnstyledButton style={{ width: '100%' }}>
+                  <ChatList room={room} />
+                </UnstyledButton>
+              </Link>
+              <Divider />
+            </Fragment>
+          ))}
       </Flex>
     </Flex>
   );

@@ -54,9 +54,8 @@ const useList = () => {
   return {
     rooms: rooms.map((room) => ({
       ...room,
-      nickname:
-        relayServers.find((server) => server.value === room.server)?.label ??
-        'Unknown Network',
+      nickname: relayServers.find((server) => server.value === room.server)
+        ?.label,
     })),
     create,
   };

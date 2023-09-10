@@ -24,6 +24,7 @@ const useList = () => {
     const pooling = async () => {
       const handshake = await client.EywaEywa.query.queryGetHandshake(
         account.address,
+        { 'pagination.limit': '100' },
       );
       const notOpenedShakes = handshake.data.handshake?.filter(
         (shake) =>

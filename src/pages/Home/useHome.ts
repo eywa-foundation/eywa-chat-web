@@ -19,7 +19,7 @@ const useHome = () => {
 
   useEffect(() => {
     const account = accounts?.[0];
-    if (!keplr || !account || !client || loading) return;
+    if (!ready || !keplr || !account || !client || loading) return;
 
     (async () => {
       try {
@@ -36,16 +36,19 @@ const useHome = () => {
           setKeyPair(keyPair);
         }
         setSuccess(true);
-      } catch {
+      } catch (e) {
+        console.error(e);
         notifications.show({
           message: 'Failed to register user.',
           variant: 'error',
         });
       } finally {
+        setReady(false);
         setLoading(false);
       }
     })();
   }, [
+    ready,
     accounts,
     client,
     generateKeyPair,

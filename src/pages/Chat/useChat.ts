@@ -1,6 +1,6 @@
 import { useInputState, useListState, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 import useKeplr from '../../hooks/useKeplr';
 import { useParams } from 'react-router';
 import useKeyPairStore from '../../hooks/useKeyPairStore';
@@ -10,6 +10,8 @@ import {
   importPublicKey,
 } from '../../utils/crypto';
 import useRoomsStore from '../../hooks/useRoomsStore';
+import useRelayServers from '../../hooks/useRelayServers';
+import { useSearchParams } from 'react-router-dom';
 
 export interface ChatMessage {
   id: string;
@@ -30,12 +32,22 @@ const useChat = () => {
   const { privateKey } = useKeyPairStore();
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
   const { rooms, addChat } = useRoomsStore();
-  const room = rooms.find((room) => room.opponent === targetAddress);
-  const [socket] = useState(() =>
-    room ? io('https://relayer.neytiri.eywa.jaehong21.com') : undefined,
+  const [socket, setSocket] = useState<Socket>();
+  const { client } = useKeplr();
+  const [searchParams] = useSearchParams();
+  const servers = useRelayServers();
+  const server = servers.find(
+    (server) => server.label === searchParams.get('server'),
+  );
+  const room = rooms.find(
+    (room) => room.opponent === targetAddress && room.server === server?.value,
   );
   const isChain = !(room?.server.endsWith('.com') ?? false);
-  const { client } = useKeplr();
+
+  useEffect(() => {
+    if (!room) return;
+    setSocket(isChain ? undefined : io(room.server));
+  }, [room, isChain]);
 
   useEffect(() => {
     if (!client || !targetAddress) return;

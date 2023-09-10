@@ -42,7 +42,7 @@ const ListPage = () => {
       <Flex direction="column">
         {rooms?.map((room) => (
           <Fragment key={room.roomId}>
-            <Link to={`/chat/${room.opponent}`}>
+            <Link to={`/chat/${room.opponent}?server=${room.nickname}`}>
               <UnstyledButton style={{ width: '100%' }}>
                 <ChatList room={room} />
               </UnstyledButton>

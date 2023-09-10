@@ -31,7 +31,9 @@ const useChat = () => {
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
   const { rooms, addChat } = useRoomsStore();
   const room = rooms.find((room) => room.opponent === targetAddress);
-  const [socket] = useState(() => (room ? io(room.server) : undefined));
+  const [socket] = useState(() =>
+    room ? io('https://relayer.neytiri.eywa.jaehong21.com') : undefined,
+  );
   const isChain = !(room?.server.endsWith('.com') ?? false);
   const { client } = useKeplr();
 

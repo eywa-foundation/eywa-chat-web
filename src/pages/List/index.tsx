@@ -1,28 +1,8 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Text,
-  UnstyledButton,
-} from '@mantine/core';
+import { Button, Divider, Flex, Text, UnstyledButton } from '@mantine/core';
 import useList, { Room } from './useList';
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
-const HealthyCircle = ({ healthy }: { healthy: boolean }) => (
-  <Box
-    mr="1rem"
-    style={{
-      width: '0.75rem',
-      height: '0.75rem',
-      borderRadius: '50%',
-      backgroundColor: healthy ? 'green' : 'red',
-      flexShrink: 0,
-      flexBasis: '0.75rem',
-    }}
-  />
-);
+import HealthyCircle from '../../components/HealthyCircle';
 
 const ChatList = ({ room }: { room: Room & { nickname: string } }) => {
   return (

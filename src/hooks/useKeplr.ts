@@ -14,11 +14,22 @@ declare global {
 
 type Newed<T> = T extends new (...args: never[]) => infer R ? R : never;
 
+const chains = {
+  'eywa-testnet': {
+    api: 'http://node.celestia.eywa.jaehong21.com:1317',
+    rpc: 'http://node.celestia.eywa.jaehong21.com:26657',
+  },
+  eywa: {
+    api: 'http://localhost:1317',
+    rpc: 'http://localhost:26657',
+  },
+};
+
 const useKeplr = ({
   chainId = 'eywa',
   enabled = true,
 }: {
-  chainId?: string;
+  chainId?: keyof typeof chains;
   enabled?: boolean;
 } = {}) => {
   const [keplr, setKeplr] = useState<Keplr>();
@@ -36,14 +47,14 @@ const useKeplr = ({
     setClient(
       new Client(
         {
-          apiURL: 'http://node.celestia.eywa.jaehong21.com:1317',
-          rpcURL: 'http://node.celestia.eywa.jaehong21.com:26657',
+          apiURL: chains[chainId].api,
+          rpcURL: chains[chainId].rpc,
           prefix: 'cosmos',
         },
         offlineSigner,
       ),
     );
-  }, [offlineSigner]);
+  }, [chainId, offlineSigner]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -77,8 +88,8 @@ const useKeplr = ({
         await keplr.experimentalSuggestChain({
           chainId,
           chainName: chainId,
-          rpc: 'http://node.celestia.eywa.jaehong21.com:26657',
-          rest: 'http://node.celestia.eywa.jaehong21.com:1317',
+          rpc: chains[chainId].rpc,
+          rest: chains[chainId].api,
           bip44: {
             coinType: 118,
           },

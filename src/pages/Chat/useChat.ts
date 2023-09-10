@@ -24,7 +24,6 @@ const useChat = () => {
   const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView({
     duration: 0,
   });
-  const [socket] = useState(() => io('http://localhost:3000'));
   const { accounts } = useKeplr();
   const address = accounts?.[0]?.address;
   const { address: targetAddress } = useParams<{ address: string }>();
@@ -32,6 +31,7 @@ const useChat = () => {
   const [bobPublicKey, setBobPublicKey] = useState<CryptoKey>();
   const { rooms, addChat } = useRoomsStore();
   const room = rooms.find((room) => room.opponent === targetAddress);
+  const [socket] = useState(() => (room ? io(room.server) : undefined));
   const isChain = !(room?.server.endsWith('.com') ?? false);
   const { client } = useKeplr();
 
@@ -47,7 +47,7 @@ const useChat = () => {
 
   useEffect(() => {
     if (!address || !targetAddress || isChain) return;
-    socket.emit('join', { from: address, to: targetAddress });
+    socket?.emit('join', { from: address, to: targetAddress });
     const handleChat = ({
       from,
       content,
@@ -65,9 +65,9 @@ const useChat = () => {
         }),
       );
     };
-    socket.on('chat', handleChat);
+    socket?.on('chat', handleChat);
     return () => {
-      socket.off('chat', handleChat);
+      socket?.off('chat', handleChat);
     };
   }, [address, isChain, messageHandler, privateKey, socket, targetAddress]);
 
@@ -85,7 +85,7 @@ const useChat = () => {
               time: Date.now(),
             },
           })
-        : socket.emit('chat', { from: address, to: targetAddress, content }),
+        : socket?.emit('chat', { from: address, to: targetAddress, content }),
     );
 
     addChat(room?.roomId ?? '', message);
@@ -93,7 +93,6 @@ const useChat = () => {
   };
 
   useEffect(() => {
-    if (!isChain) return;
     let cancelled = false;
     const roomId = room?.roomId ?? '';
     if (!client || !roomId || !privateKey) return;
@@ -126,7 +125,7 @@ const useChat = () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [address, client, isChain, messageHandler, messages, privateKey, room]);
+  }, [address, client, messageHandler, messages, privateKey, room]);
 
   useEffect(() => {
     scrollIntoView();

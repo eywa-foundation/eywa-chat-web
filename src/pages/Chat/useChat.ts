@@ -12,6 +12,7 @@ import {
 import useRoomsStore from '../../hooks/useRoomsStore';
 import useRelayServers from '../../hooks/useRelayServers';
 import { useSearchParams } from 'react-router-dom';
+import { EywaChat } from 'eywa-client-ts/eywa.eywa/rest';
 
 export interface ChatMessage {
   id: string;
@@ -22,7 +23,7 @@ export interface ChatMessage {
 
 const useChat = () => {
   const [message, setMessage] = useInputState('');
-  const [messages, messageHandler] = useListState<ChatMessage>();
+  const [messagesFromBob, messageHandler] = useListState<ChatMessage>();
   const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView({
     duration: 0,
   });
@@ -43,6 +44,16 @@ const useChat = () => {
     (room) => room.opponent === targetAddress && room.server === server?.value,
   );
   const isChain = !(room?.server.endsWith('.com') ?? false);
+  const [progress, setProgress] = useState(0);
+  const [chats, setChats] = useState<EywaChat[]>();
+  const messages = [
+    ...(room?.messages.map((m) => ({
+      ...m,
+      author: 'Alice',
+      id: `${globalThis.crypto.randomUUID()}`,
+    })) ?? []),
+    ...messagesFromBob,
+  ].sort((a, b) => b.timestamp - a.timestamp);
 
   useEffect(() => {
     if (!room) return;
@@ -107,59 +118,67 @@ const useChat = () => {
   };
 
   useEffect(() => {
-    let cancelled = false;
     const roomId = room?.roomId ?? '';
     if (!client || !roomId || !privateKey) return;
     const fetch = async () => {
       const chat = await client.EywaEywa.query.queryGetChat(roomId);
-      const bobMessages = (
-        chat.data.chat?.filter(
-          (chat) =>
-            chat.time &&
-            chat.sender !== address &&
-            !(
-              messages
-                .map((m) => m.timestamp.toString())
-                .includes(chat.time.toString()) ?? false
-            ),
-        ) ?? []
-      ).map(async (chat) => ({
-        id: globalThis.crypto.randomUUID(),
-        author: 'Bob' as const,
-        message: await decryptWithPrivateKey(chat.message ?? '', privateKey),
-        timestamp: Number.parseInt(chat.time ?? '0'),
-      }));
-      if (bobMessages.length > 0 && !cancelled) {
-        messageHandler.prepend(...(await Promise.all(bobMessages)));
-      }
+      setChats(chat.data.chat);
     };
     const interval = setInterval(fetch, 1000);
 
     return () => {
-      cancelled = true;
       clearInterval(interval);
     };
-  }, [address, client, messageHandler, messages, privateKey, room]);
+  }, [address, client, messageHandler, messagesFromBob, privateKey, room]);
+
+  useEffect(() => {
+    if (!chats || !privateKey || !address) return;
+    let cancelled = false;
+    const bobMessages = (
+      chats.filter(
+        (chat) =>
+          chat.time &&
+          chat.sender !== address &&
+          !(
+            messagesFromBob
+              .map((m) => m.timestamp.toString())
+              .includes(chat.time.toString()) ?? false
+          ),
+      ) ?? []
+    ).map(async (chat) => ({
+      id: globalThis.crypto.randomUUID(),
+      author: 'Bob' as const,
+      message: await decryptWithPrivateKey(chat.message ?? '', privateKey),
+      timestamp: Number.parseInt(chat.time ?? '0'),
+    }));
+    if (bobMessages.length > 0) {
+      Promise.all(bobMessages).then((messages) => {
+        if (cancelled) return;
+        messageHandler.prepend(...messages);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [address, chats, messageHandler, messagesFromBob, privateKey]);
 
   useEffect(() => {
     scrollIntoView();
   }, [messages, scrollIntoView]);
 
+  useEffect(() => {
+    setProgress(((chats?.length ?? 0) / messages.length) * 100);
+  }, [chats, messages]);
+
   return {
+    progress,
     room,
     targetRef,
     scrollableRef,
     handleSendMessage,
     message,
     setMessage,
-    messages: [
-      ...(room?.messages.map((m) => ({
-        ...m,
-        author: 'Alice',
-        id: `${globalThis.crypto.randomUUID()}`,
-      })) ?? []),
-      ...messages,
-    ].sort((a, b) => b.timestamp - a.timestamp),
+    messages,
   };
 };
 

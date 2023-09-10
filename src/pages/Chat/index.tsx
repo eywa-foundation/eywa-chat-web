@@ -1,9 +1,18 @@
-import { Box, Button, Container, Flex, Text, TextInput } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Progress,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import useChat from './useChat';
 import dayjs from 'dayjs';
 
 const ChatPage = () => {
   const {
+    progress,
     messages,
     message,
     setMessage,
@@ -22,6 +31,7 @@ const ChatPage = () => {
       }}
     >
       <Flex direction="column" gap="1rem" style={{ height: '100%' }}>
+        <Progress value={progress} />
         <Box style={{ flex: 1, overflow: 'scroll' }} ref={scrollableRef}>
           <Flex direction="column-reverse" gap=".4em">
             <span ref={targetRef} />
